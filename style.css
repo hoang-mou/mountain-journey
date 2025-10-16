@@ -1,20 +1,58 @@
 body {
   font-family: 'Poppins', sans-serif;
-  background: linear-gradient(to top, #e0c3fc, #8ec5fc);
   height: 100vh;
   margin: 0;
   display: flex;
   justify-content: center;
   align-items: center;
+  background: linear-gradient(to top, #a8edea, #fed6e3);
+  overflow: hidden;
+}
+
+.sky {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  overflow: hidden;
+  z-index: -2;
+}
+
+.cloud {
+  position: absolute;
+  top: 10%;
+  left: -200px;
+  width: 200px;
+  height: 60px;
+  background: rgba(255,255,255,0.8);
+  border-radius: 50px;
+  filter: blur(2px);
+  animation: moveCloud 60s linear infinite;
+}
+
+.cloud::before, .cloud::after {
+  content: "";
+  position: absolute;
+  background: rgba(255,255,255,0.8);
+  width: 150px; height: 60px;
+  border-radius: 50px;
+  top: -20px;
+  left: 40px;
+}
+
+@keyframes moveCloud {
+  0% { left: -250px; }
+  100% { left: 110%; }
 }
 
 .app {
-  background: white;
+  background: rgba(255,255,255,0.95);
   border-radius: 16px;
   padding: 30px;
   width: 360px;
   text-align: center;
   box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  position: relative;
+  z-index: 2;
 }
 
 .mountain {
