@@ -2,19 +2,20 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Mountain Journey 3D - Goal Tracker</title>
-  
+
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
-  
+
   <!-- CSS -->
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
+  <meta name="theme-color" content="#6a994e" />
 </head>
 <body>
   <!-- 🌄 Canvas 3D -->
   <canvas id="scene"></canvas>
-  
+
   <!-- 🎯 Giao diện người dùng -->
   <div class="ui">
     <!-- Header -->
@@ -23,47 +24,47 @@
       <h1>🏔 Mountain Journey</h1>
       <p class="subtitle">Mỗi bước nhỏ đưa bạn gần hơn tới đỉnh.</p>
     </header>
-    
+
     <!-- Form nhập mục tiêu -->
     <section class="goal-input">
-      <form id="goalForm">
-        <input 
-          type="text" 
-          id="goalInput" 
-          placeholder="Nhập mục tiêu của bạn..." 
+      <form id="goalForm" autocomplete="off">
+        <input
+          type="text"
+          id="goalInput"
+          placeholder="Nhập mục tiêu của bạn..."
           required
         />
-        
+
         <div class="time-inputs">
-          <input 
-            type="date" 
+          <input
+            type="date"
             id="goalDate"
             title="Chọn ngày"
           />
-          <input 
-            type="time" 
+          <input
+            type="time"
             id="goalTime"
             title="Chọn giờ"
           />
         </div>
-        
+
         <div class="email-notification">
-          <input 
-            type="checkbox" 
+          <input
+            type="checkbox"
             id="emailNotification"
           />
           <label for="emailNotification">📧 Gửi email nhắc nhở (trước 30 phút)</label>
         </div>
-        
+
         <button type="submit">Thêm mục tiêu</button>
       </form>
     </section>
-    
+
     <!-- Danh sách mục tiêu -->
     <section class="goal-list">
       <ul id="goalList"></ul>
     </section>
-    
+
     <!-- Thanh tiến độ -->
     <section class="progress">
       <label>Tiến độ leo núi hôm nay:</label>
@@ -72,21 +73,36 @@
       </div>
       <p id="progressText">0% hoàn thành</p>
     </section>
-    
+
     <!-- Quote động viên -->
     <section class="daily-quote">
       <p id="quote">"Hãy bắt đầu, dù chỉ bằng một bước nhỏ."</p>
     </section>
-  </div>
-  
-  <!-- Scripts -->
+        <!-- Tabs chuyển chế độ -->
+    <nav class="ui-tabs">
+      <button id="tab-today" class="active">Hôm nay</button>
+      <button id="tab-week">Tuần</button>
+      <button id="tab-month">Tháng</button>
+    </nav>
+
+    <!-- Khu thống kê -->
+    <section class="stats" id="stats">
+      <canvas id="chartCanvas" height="160"></canvas>
+    </section>
+  </div> <!-- / .ui -->
+  <!-- Thư viện 3D & animation -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-  
-  <!-- EmailJS Library -->
+
+  <!-- Chart.js cho biểu đồ -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- EmailJS -->
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-  
-  <script src="script.js"></script>
+
+  <!-- Script chính của bạn (để cuối, có defer để không chặn render) -->
+  <script src="script.js" defer></script>
 </body>
 </html>
+
