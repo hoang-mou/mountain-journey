@@ -3,43 +3,68 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mountain Journey 3D</title>
-
-  <!-- Font & CSS -->
+  <title>Mountain Journey 3D - Goal Tracker</title>
+  
+  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <!-- 🌄 KHU VỰC 3D (Three.js sẽ render ở đây) -->
+  <!-- 🌄 Canvas 3D -->
   <canvas id="scene"></canvas>
-
-  <!-- 🎯 KHU VỰC GIAO DIỆN NGƯỜI DÙNG -->
+  
+  <!-- 🎯 Giao diện người dùng -->
   <div class="ui">
-    <!-- 1️⃣ Thanh tiêu đề -->
+    <!-- Header -->
     <header class="ui-header">
+      <button id="emailSettings" class="email-settings-btn" title="Cấu hình email">⚙️</button>
       <h1>🏔 Mountain Journey</h1>
       <p class="subtitle">Mỗi bước nhỏ đưa bạn gần hơn tới đỉnh.</p>
     </header>
-
-    <!-- 2️⃣ Form nhập mục tiêu -->
+    
+    <!-- Form nhập mục tiêu -->
     <section class="goal-input">
       <form id="goalForm">
         <input 
           type="text" 
           id="goalInput" 
-          placeholder="Nhập mục tiêu hôm nay..." 
+          placeholder="Nhập mục tiêu của bạn..." 
           required
         />
-        <button type="submit">Thêm</button>
+        
+        <div class="time-inputs">
+          <input 
+            type="date" 
+            id="goalDate"
+            title="Chọn ngày"
+          />
+          <input 
+            type="time" 
+            id="goalTime"
+            title="Chọn giờ"
+          />
+        </div>
+        
+        <div class="email-notification">
+          <input 
+            type="checkbox" 
+            id="emailNotification"
+          />
+          <label for="emailNotification">📧 Gửi email nhắc nhở (trước 30 phút)</label>
+        </div>
+        
+        <button type="submit">Thêm mục tiêu</button>
       </form>
     </section>
-
-    <!-- 3️⃣ Danh sách mục tiêu -->
+    
+    <!-- Danh sách mục tiêu -->
     <section class="goal-list">
       <ul id="goalList"></ul>
     </section>
-
-    <!-- 4️⃣ Thanh tiến độ -->
+    
+    <!-- Thanh tiến độ -->
     <section class="progress">
       <label>Tiến độ leo núi hôm nay:</label>
       <div class="progress-bar">
@@ -47,30 +72,21 @@
       </div>
       <p id="progressText">0% hoàn thành</p>
     </section>
-
-    <!-- 5️⃣ Khu vực quote -->
+    
+    <!-- Quote động viên -->
     <section class="daily-quote">
       <p id="quote">"Hãy bắt đầu, dù chỉ bằng một bước nhỏ."</p>
     </section>
-
-    <!-- 6️⃣ Menu chuyển tab (tuần/tháng) -->
-    <nav class="ui-tabs">
-      <button id="tab-today" class="active">Hôm nay</button>
-      <button id="tab-week">Tuần</button>
-      <button id="tab-month">Tháng</button>
-    </nav>
-
-    <!-- 7️⃣ Khu thống kê (ẩn mặc định, hiện khi chọn tab tuần/tháng) -->
-    <section class="stats hidden" id="stats">
-      <canvas id="chartCanvas"></canvas>
-    </section>
   </div>
-
-  <!-- 🧩 Script (Three.js, GSAP, Chart.js, JS riêng) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r152/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.152/examples/js/loaders/GLTFLoader.js"></script>
+  
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- EmailJS Library -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  
   <script src="script.js"></script>
 </body>
 </html>
