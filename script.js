@@ -1,3 +1,6 @@
+// =============================================================
+//  🎮 MOUNTAIN JOURNEY 3D
+// =============================================================
 
 // ====== SCENE 3D CƠ BẢN ======
 const canvas = document.getElementById('scene');
@@ -5,7 +8,7 @@ const scene = new THREE.Scene();
 
 // 🎥 Camera
 const camera = new THREE.PerspectiveCamera(
-  75, 
+  75,
   window.innerWidth / window.innerHeight,
   0.1,
   1000
@@ -28,12 +31,19 @@ ground.rotation.x = -Math.PI / 2;
 ground.position.y = -4;
 scene.add(ground);
 
-// 🏔 Tạo núi đơn giản (hình nón)
+// 🏔 Núi hình chóp
 const mountainGeometry = new THREE.ConeGeometry(5, 8, 6);
 const mountainMaterial = new THREE.MeshStandardMaterial({ color: 0x8b6b4b });
 const mountain = new THREE.Mesh(mountainGeometry, mountainMaterial);
 mountain.position.y = 0;
 scene.add(mountain);
+
+// 🧗‍♂️ NHÂN VẬT (placeholder cube)
+const characterGeometry = new THREE.BoxGeometry(0.5, 1, 0.5);
+const characterMaterial = new THREE.MeshStandardMaterial({ color: 0x3a5a40 });
+const character = new THREE.Mesh(characterGeometry, characterMaterial);
+character.position.set(0, -3.5, 0);
+scene.add(character);
 
 // 🎨 Renderer
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
@@ -41,13 +51,13 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setClearColor(0xaeecef, 1); // màu bầu trời
 
-// 🌫 Hiệu ứng sương (fog nhẹ)
+// 🌫 Hiệu ứng sương
 scene.fog = new THREE.Fog(0xaeecef, 5, 25);
 
-// 🔄 Vòng lặp animation
+// 🔄 Animation loop
 function animate() {
   requestAnimationFrame(animate);
-  mountain.rotation.y += 0.003; // núi xoay nhẹ cho sinh động
+  mountain.rotation.y += 0.003;
   renderer.render(scene, camera);
 }
 animate();
@@ -58,7 +68,13 @@ window.addEventListener('resize', () => {
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
-// 🗂️ Khởi tạo các phần tử DOM
+
+
+// =============================================================
+//  🧩 PHẦN GIAO DIỆN: QUẢN LÝ MỤC TIÊU & TIẾN ĐỘ
+// =============================================================
+
+// 🗂️ DOM Elements
 const form = document.getElementById('goalForm');
 const input = document.getElementById('goalInput');
 const list = document.getElementById('goalList');
@@ -66,10 +82,10 @@ const progressFill = document.getElementById('progressFill');
 const progressText = document.getElementById('progressText');
 const quoteEl = document.getElementById('quote');
 
-// 📦 Lấy dữ liệu cũ từ localStorage
+// 📦 LocalStorage
 let goals = JSON.parse(localStorage.getItem('goals')) || [];
 
-// 💬 Danh sách câu quote ngẫu nhiên
+// 💬 Câu nói động viên
 const quotes = [
   "Không cần nhanh, chỉ cần kiên trì là đủ. 🌱",
   "Một bước nhỏ hôm nay là một chiến thắng. 🏔",
@@ -77,12 +93,10 @@ const quotes = [
   "Bạn đang làm rất tốt, đừng dừng lại nhé! 🌟",
   "Mỗi hành trình vĩ đại đều bắt đầu bằng một bước nhỏ."
 ];
-
-// 🎯 Hiển thị quote ngẫu nhiên
 quoteEl.textContent = quotes[Math.floor(Math.random() * quotes.length)];
 
 
-// ====== HÀM HIỂN THỊ DANH SÁCH MỤC TIÊU ======
+// ====== HIỂN THỊ DANH SÁCH ======
 function renderGoals() {
   list.innerHTML = '';
 
@@ -92,4 +106,62 @@ function renderGoals() {
       <span style="text-decoration: ${goal.done ? 'line-through' : 'none'}">
         ${goal.text}
       </span>
-      <butt
+      <button onclick="toggleGoal(${index})">${goal.done ? '↩️' : '✅'}</button>
+    `;
+    list.appendChild(li);
+  });
+
+  updateProgress();
+}
+
+
+// ====== THÊM MỤC TIÊU ======
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const text = input.value.trim();
+  if (!text) return;
+
+  goals.push({ text, done: false });
+  input.value = '';
+  localStorage.setItem('goals', JSON.stringify(goals));
+  renderGoals();
+});
+
+
+// ====== ĐÁNH DẤU HOÀN THÀNH / HỦY ======
+function toggleGoal(index) {
+  goals[index].done = !goals[index].done;
+  localStorage.setItem('goals', JSON.stringify(goals));
+  renderGoals();
+}
+
+
+// ====== CẬP NHẬT TIẾN ĐỘ + ANIMATION ======
+function updateProgress() {
+  const total = goals.length;
+  const done = goals.filter(g => g.done).length;
+  const percent = total === 0 ? 0 : Math.round((done / total) * 100);
+
+  progressFill.style.width = `${percent}%`;
+  progressText.textContent = `${percent}% hoàn thành`;
+
+  moveCharacterByProgress(percent);
+}
+
+
+// ====== ANIMATION NHÂN VẬT LEO NÚI ======
+function moveCharacterByProgress(percent) {
+  const baseY = -3.5; // vị trí bắt đầu
+  const climbHeight = 6; // chiều cao leo tối đa
+  const newY = baseY + (percent / 100) * climbHeight;
+
+  gsap.to(character.position, {
+    y: newY,
+    duration: 1,
+    ease: "power2.out"
+  });
+}
+
+
+// ====== KHỞI TẠO ======
+renderGoals();
