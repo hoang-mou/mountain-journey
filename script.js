@@ -35,7 +35,7 @@ scene.add(ground);
 const mountainGeometry = new THREE.ConeGeometry(5, 8, 6);
 const mountainMaterial = new THREE.MeshStandardMaterial({ color: 0x8b6b4b });
 const mountain = new THREE.Mesh(mountainGeometry, mountainMaterial);
-mountain.position.set(0, 0, -1); // đẩy nhẹ ra sau
+mountain.position.set(0, 0, -1);
 scene.add(mountain);
 
 // ====== 2) NHÂN VẬT 3D (.glb) ======
@@ -47,7 +47,6 @@ loader.load(
   (gltf) => {
     character = gltf.scene;
 
-    // Scale theo kích thước thật của model để cao ~1.6 đơn vị
     const box = new THREE.Box3().setFromObject(character);
     const size = new THREE.Vector3();
     box.getSize(size);
@@ -55,10 +54,7 @@ loader.load(
     const scale = targetHeight / (size.y || 1);
     character.scale.setScalar(scale);
 
-    // Đặt nhân vật ở sườn núi: lệch phải (x), hơi nhô ra (z), nhấc nhẹ (y)
     character.position.set(2.2, -3.2, 2.2);
-
-    // Hướng mặt nhìn về đỉnh núi
     character.lookAt(0, 3.5, -1);
 
     scene.add(character);
@@ -77,7 +73,6 @@ const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setClearColor(0xaeecef, 1);
-// màu sắc đúng gamma
 renderer.outputEncoding = THREE.sRGBEncoding;
 
 // 🌫 Fog
@@ -97,6 +92,8 @@ window.addEventListener('resize', () => {
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
+
+
 // =============================================================
 // 🧩 UI & GOALS — DOM, quotes, render list, toggle, delete, progress
 // =============================================================
@@ -111,11 +108,11 @@ const list = document.getElementById('goalList');
 const progressFill = document.getElementById('progressFill');
 const progressText = document.getElementById('progressText');
 const quoteEl = document.getElementById('quote');
-const emailSettingsBtn = document.getElementById('emailSettings'); // sẽ dùng ở Section 4
+const emailSettingsBtn = document.getElementById('emailSettings');
 
 // 💾 LocalStorage
 let goals = JSON.parse(localStorage.getItem('goals')) || [];
-let userEmail = localStorage.getItem('userEmail') || ''; // dùng ở Section 4
+let userEmail = localStorage.getItem('userEmail') || '';
 
 // 💬 Quote ngẫu nhiên
 const quotes = [
@@ -191,14 +188,13 @@ form.addEventListener('submit', (e) => {
     done: false,
     date: dateInput.value || null,
     time: timeInput.value || null,
-    emailNotification: !!emailCheckbox.checked, // dùng ở Section 4
-    notificationSent: false,                    // dùng ở Section 4
+    emailNotification: !!emailCheckbox.checked,
+    notificationSent: false,
     createdAt: new Date().toISOString()
   };
 
   goals.push(newGoal);
 
-  // reset form
   input.value = '';
   dateInput.value = '';
   timeInput.value = '';
@@ -237,14 +233,13 @@ function updateProgress() {
   progressText.textContent = `${percent}% hoàn thành (${done}/${total} mục tiêu)`;
 
   moveCharacterByProgress(percent);
-  // (Section 3 sẽ thêm: persistDailyProgress(percent) + cập nhật chart)
 }
 
-// Di chuyển nhân vật theo % (chỉ trục Y)
+// Di chuyển nhân vật theo %
 function moveCharacterByProgress(percent) {
-  if (!character) return; // chờ model load
-  const baseY = -3.2;     // khớp vị trí đặt ở Section 1/4
-  const climbHeight = 6;  // quãng đường leo tối đa
+  if (!character) return;
+  const baseY = -3.2;
+  const climbHeight = 6;
   const newY = baseY + (percent / 100) * climbHeight;
 
   gsap.to(character.position, {
@@ -270,6 +265,8 @@ function showNotification(message, type = 'info') {
 
 // Khởi tạo render lần đầu
 renderGoals();
+
+
 // =============================================================
 // 📊 Charts — Hôm nay / Tuần / Tháng + Lưu tiến độ theo ngày
 // =============================================================
@@ -292,9 +289,9 @@ function ymd(date) {
 }
 function getTodayKey() { return ymd(new Date()); }
 
-// Lưu/đọc map % theo ngày trong localStorage
+// Lưu/đọc map % theo ngày
 function persistDailyProgress(percent) {
-  const key = 'dailyProgress'; // { 'YYYY-MM-DD': number }
+  const key = 'dailyProgress';
   const map = JSON.parse(localStorage.getItem(key) || '{}');
   map[getTodayKey()] = percent;
   localStorage.setItem(key, JSON.stringify(map));
@@ -319,14 +316,13 @@ function buildSeriesFor(labels) {
   return labels.map(key => (map[key] ?? 0));
 }
 
-// Vẽ biểu đồ theo mode: 'today' | 'week' | 'month'
+// Vẽ biểu đồ theo mode
 function renderChart(mode = 'today') {
   if (!chartCtx) return;
 
   let labels, data, title;
 
   if (mode === 'today') {
-    // Lấy % hiện tại từ goals
     const total = goals.length;
     const done = goals.filter(g => g.done).length;
     const percent = total ? Math.round((done / total) * 100) : 0;
@@ -372,7 +368,7 @@ function renderChart(mode = 'today') {
   });
 }
 
-// Kích hoạt tab (UI)
+// Kích hoạt tab
 function setActiveTab(btn) {
   [tabToday, tabWeek, tabMonth].forEach(b => b && b.classList.remove('active'));
   if (btn) btn.classList.add('active');
@@ -383,42 +379,11 @@ if (tabToday) tabToday.addEventListener('click', () => { setActiveTab(tabToday);
 if (tabWeek)  tabWeek .addEventListener('click', () => { setActiveTab(tabWeek ); renderChart('week');  });
 if (tabMonth) tabMonth.addEventListener('click', () => { setActiveTab(tabMonth); renderChart('month'); });
 
-// ---- Gắn vào tiến trình hiện tại ----
-// (Override nhẹ hàm updateProgress ở Section 2/4 để lưu % theo ngày + cập nhật chart ngay)
-// ---- Gắn vào tiến trình hiện tại (cách an toàn, không hoist) ----
-// ---- Gắn vào tiến trình hiện tại (cách an toàn, không hoist) ----
-function enhanceUpdateProgress() {
-  // giữ bản gốc từ Section 2/4
-  const prev = updateProgress;
-
-  // ghi đè theo kiểu function expression để tránh hoist
-  window.updateProgress = function () {
-    // 1) chạy bản gốc để cập nhật UI + di chuyển nhân vật
-    prev();
-
-    // 2) tính % hiện tại
-    const total = goals.length;
-    const done = goals.filter(g => g.done).length;
-    const percent = total ? Math.round((done / total) * 100) : 0;
-
-    // 3) lưu vào dailyProgress + cập nhật chart nếu đang ở tab Hôm nay
-    persistDailyProgress(percent);
-
-    if (tabToday && tabToday.classList.contains('active')) {
-      renderChart('today');
-    }
-  };
-}
-enhanceUpdateProgress(); // kích hoạt ghi đè an toàn
-
-// Vẽ chart mặc định khi load
-setActiveTab(tabToday);
-renderChart('today');
-
-enhanceUpdateProgress(); // kích hoạt ghi đè an toàn
-
-
-  // sau đó lưu % ngày + cập nhật chart nếu đang ở tab "Hôm nay"
+// Gắn vào updateProgress để tự động lưu % và cập nhật chart
+const originalUpdateProgress = updateProgress;
+window.updateProgress = function() {
+  originalUpdateProgress();
+  
   const total = goals.length;
   const done = goals.filter(g => g.done).length;
   const percent = total ? Math.round((done / total) * 100) : 0;
@@ -428,21 +393,22 @@ enhanceUpdateProgress(); // kích hoạt ghi đè an toàn
   if (tabToday && tabToday.classList.contains('active')) {
     renderChart('today');
   }
-}
+};
 
 // Vẽ chart mặc định khi load
 setActiveTab(tabToday);
 renderChart('today');
+
+
 // =============================================================
-// 📧 Email Notification — EmailJS (init, cấu hình, nhắc 30’ trước)
+// 📧 Email Notification — EmailJS
 // =============================================================
 
-// ⚙️ Cấu hình EmailJS (dùng giá trị bạn đã setup trên EmailJS)
 const EMAILJS_SERVICE_ID  = 'service_4yfpzaq';
 const EMAILJS_TEMPLATE_ID = 'template_v4ozx4p';
 const EMAILJS_PUBLIC_KEY  = 'u-3f9feGnUN0uAiaD';
 
-// Khởi tạo EmailJS an toàn
+// Khởi tạo EmailJS
 try {
   if (window.emailjs && typeof emailjs.init === 'function') {
     emailjs.init(EMAILJS_PUBLIC_KEY);
@@ -454,7 +420,7 @@ try {
   console.warn('⚠️ Không thể init EmailJS:', e);
 }
 
-// Hộp thoại cấu hình email người dùng (lưu vào localStorage)
+// Cấu hình email
 function setupUserEmail() {
   const email = prompt('📧 Nhập email của bạn để nhận thông báo:', userEmail || '');
   if (email && email.includes('@')) {
@@ -466,12 +432,12 @@ function setupUserEmail() {
   }
 }
 
-// Gắn nút ⚙️ trong header để cấu hình email
+// Gắn nút settings
 if (emailSettingsBtn) {
   emailSettingsBtn.addEventListener('click', setupUserEmail);
 }
 
-// Hỏi người dùng bật email lần đầu (nếu chưa có)
+// Hỏi lần đầu
 if (!userEmail) {
   setTimeout(() => {
     const want = confirm('🏔️ Mountain Journey\n\nBạn có muốn nhận thông báo email cho các mục tiêu không?');
@@ -479,7 +445,7 @@ if (!userEmail) {
   }, 1200);
 }
 
-// Gửi email nhắc cho 1 mục tiêu
+// Gửi email
 async function sendReminderEmail(goal) {
   if (!userEmail) {
     console.log('⛔ Chưa cấu hình email người dùng.');
@@ -507,7 +473,7 @@ async function sendReminderEmail(goal) {
   }
 }
 
-// Kiểm tra lịch & gửi trước 30 phút
+// Kiểm tra lịch
 function checkScheduledNotifications() {
   const now = new Date();
   const THIRTY_MIN = 30 * 60 * 1000;
@@ -519,7 +485,6 @@ function checkScheduledNotifications() {
     const goalDateTime = new Date(`${goal.date}T${goal.time}`);
     const diff = goalDateTime - now;
 
-    // nếu còn <= 30' và > 0, và chưa gửi → gửi
     if (diff > 0 && diff <= THIRTY_MIN && !goal.notificationSent) {
       console.log('⏰ Sắp đến giờ cho mục tiêu:', goal.text);
       sendReminderEmail(goal);
@@ -530,7 +495,5 @@ function checkScheduledNotifications() {
 }
 
 // Cron mỗi phút
-const NOTI_TIMER = setInterval(checkScheduledNotifications, 60_000);
-
-// Kiểm tra ngay khi load (đề phòng user mở trễ)
+setInterval(checkScheduledNotifications, 60000);
 checkScheduledNotifications();
