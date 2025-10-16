@@ -1,8 +1,8 @@
 // =============================================================
-//  🎮 MOUNTAIN JOURNEY 3D
+// 🎮 MOUNTAIN JOURNEY 3D – bản có mô hình thật
 // =============================================================
 
-// ====== SCENE 3D CƠ BẢN ======
+// ====== 1. SCENE 3D CƠ BẢN ======
 const canvas = document.getElementById('scene');
 const scene = new THREE.Scene();
 
@@ -38,12 +38,25 @@ const mountain = new THREE.Mesh(mountainGeometry, mountainMaterial);
 mountain.position.y = 0;
 scene.add(mountain);
 
-// 🧗‍♂️ NHÂN VẬT (placeholder cube)
-const characterGeometry = new THREE.BoxGeometry(0.5, 1, 0.5);
-const characterMaterial = new THREE.MeshStandardMaterial({ color: 0x3a5a40 });
-const character = new THREE.Mesh(characterGeometry, characterMaterial);
-character.position.set(0, -3.5, 0);
-scene.add(character);
+// ====== 2. NHÂN VẬT 3D (.glb thật) ======
+let character;
+const loader = new THREE.GLTFLoader();
+
+loader.load(
+  'https://raw.githubusercontent.com/hoang-mou/mountain-journey/main/assets/character.glb',
+  (gltf) => {
+    character = gltf.scene;
+    character.scale.set(0.8, 0.8, 0.8);
+    character.position.set(0, -3.5, 0);
+    scene.add(character);
+  },
+  (xhr) => {
+    console.log(`Đang tải mô hình: ${(xhr.loaded / xhr.total * 100).toFixed(0)}%`);
+  },
+  (error) => {
+    console.error('Lỗi tải mô hình:', error);
+  }
+);
 
 // 🎨 Renderer
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
@@ -54,7 +67,7 @@ renderer.setClearColor(0xaeecef, 1); // màu bầu trời
 // 🌫 Hiệu ứng sương
 scene.fog = new THREE.Fog(0xaeecef, 5, 25);
 
-// 🔄 Animation loop
+// 🔄 Vòng lặp animation
 function animate() {
   requestAnimationFrame(animate);
   mountain.rotation.y += 0.003;
@@ -71,7 +84,7 @@ window.addEventListener('resize', () => {
 
 
 // =============================================================
-//  🧩 PHẦN GIAO DIỆN: QUẢN LÝ MỤC TIÊU & TIẾN ĐỘ
+// 🧩 3. PHẦN GIAO DIỆN: QUẢN LÝ MỤC TIÊU & TIẾN ĐỘ
 // =============================================================
 
 // 🗂️ DOM Elements
@@ -82,10 +95,10 @@ const progressFill = document.getElementById('progressFill');
 const progressText = document.getElementById('progressText');
 const quoteEl = document.getElementById('quote');
 
-// 📦 LocalStorage
+// 📦 Lưu dữ liệu trong localStorage
 let goals = JSON.parse(localStorage.getItem('goals')) || [];
 
-// 💬 Câu nói động viên
+// 💬 Câu nói động viên ngẫu nhiên
 const quotes = [
   "Không cần nhanh, chỉ cần kiên trì là đủ. 🌱",
   "Một bước nhỏ hôm nay là một chiến thắng. 🏔",
@@ -151,8 +164,10 @@ function updateProgress() {
 
 // ====== ANIMATION NHÂN VẬT LEO NÚI ======
 function moveCharacterByProgress(percent) {
-  const baseY = -3.5; // vị trí bắt đầu
-  const climbHeight = 6; // chiều cao leo tối đa
+  if (!character) return; // Đợi model load xong
+
+  const baseY = -3.5;
+  const climbHeight = 6;
   const newY = baseY + (percent / 100) * climbHeight;
 
   gsap.to(character.position, {
