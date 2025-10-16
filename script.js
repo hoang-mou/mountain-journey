@@ -385,11 +385,28 @@ if (tabMonth) tabMonth.addEventListener('click', () => { setActiveTab(tabMonth);
 
 // ---- Gắn vào tiến trình hiện tại ----
 // (Override nhẹ hàm updateProgress ở Section 2/4 để lưu % theo ngày + cập nhật chart ngay)
-const _updateProgress_prev = updateProgress; // giữ bản cũ
+// ---- Gắn vào tiến trình hiện tại (cách an toàn, không hoist) ----
+function enhanceUpdateProgress() {
+  const prev = updateProgress; // giữ bản gốc từ Section 2/4
 
-function updateProgress() {
-  // gọi bản cũ để cập nhật UI & di chuyển nhân vật
-  _updateProgress_prev();
+  window.updateProgress = function () {
+    // 1) chạy bản gốc để cập nhật UI + di chuyển nhân vật
+    prev();
+
+    // 2) tính % hiện tại
+    const total = goals.length;
+    const done = goals.filter(g => g.done).length;
+    const percent = total ? Math.round((done / total) * 100) : 0;
+
+    // 3) lưu vào dailyProgress + cập nhật chart nếu đang ở tab Hôm nay
+    persistDailyProgress(percent);
+    if (tabToday && tabToday.classList.contains('active')) {
+      renderChart('today');
+    }
+  };
+}
+enhanceUpdateProgress(); // kích hoạt ghi đè an toàn
+
 
   // sau đó lưu % ngày + cập nhật chart nếu đang ở tab "Hôm nay"
   const total = goals.length;
