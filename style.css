@@ -415,11 +415,14 @@ body {
 /* ====== RESPONSIVE ====== */
 @media (max-width: 600px) {
   .ui {
-    right: 10px;
-    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    right: auto;
+    bottom: 10px;
+    top: auto;
     width: calc(100vw - 20px);
-    max-height: calc(100vh - 20px);
-    padding: 18px;
+    max-height: 50vh;
+    padding: 16px;
   }
 
   .ui-header h1 {
@@ -431,11 +434,15 @@ body {
   }
 
   .goal-list ul {
-    max-height: 220px;
+    max-height: 180px;
   }
 
   .stats {
-    height: 160px;
+    height: 140px;
+  }
+  
+  .progress {
+    padding: 12px;
   }
 }
 
