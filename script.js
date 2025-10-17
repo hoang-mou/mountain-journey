@@ -1,74 +1,284 @@
 // =============================================================
-// 🎮 MOUNTAIN JOURNEY 3D — Enhanced Version
+// 🎮 MOUNTAIN JOURNEY 3D — Enhanced 3D Scene
 // =============================================================
 
-// ====== 1) SCENE CƠ BẢN ======
 const canvas = document.getElementById('scene');
 const scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0x87ceeb, 30, 100);
 
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.set(0, 2, 8);
+const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+camera.position.set(15, 12, 25);
+camera.lookAt(0, 5, 0);
 
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+// ====== LIGHTING ======
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
 scene.add(ambientLight);
 
-const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-directionalLight.position.set(5, 10, 7);
-scene.add(directionalLight);
+const sunLight = new THREE.DirectionalLight(0xffefd5, 1.2);
+sunLight.position.set(10, 20, 10);
+sunLight.castShadow = true;
+scene.add(sunLight);
 
-const groundGeometry = new THREE.PlaneGeometry(50, 50);
-const groundMaterial = new THREE.MeshStandardMaterial({ color: 0x99c1b9 });
+const fillLight = new THREE.DirectionalLight(0x87ceeb, 0.4);
+fillLight.position.set(-10, 5, -10);
+scene.add(fillLight);
+
+// ====== GROUND ======
+const groundGeometry = new THREE.PlaneGeometry(100, 100, 20, 20);
+const groundMaterial = new THREE.MeshStandardMaterial({ 
+  color: 0x8fbc8f,
+  roughness: 0.8,
+  metalness: 0.2
+});
 const ground = new THREE.Mesh(groundGeometry, groundMaterial);
 ground.rotation.x = -Math.PI / 2;
-ground.position.y = -4;
+ground.position.y = 0;
+ground.receiveShadow = true;
 scene.add(ground);
 
-const mountainGeometry = new THREE.ConeGeometry(5, 8, 6);
-const mountainMaterial = new THREE.MeshStandardMaterial({ color: 0x8b6b4b });
-const mountain = new THREE.Mesh(mountainGeometry, mountainMaterial);
-mountain.position.set(0, 0, -1);
-scene.add(mountain);
+// ====== MOUNTAIN ======
+const mountainGroup = new THREE.Group();
 
-// ====== 2) NHÂN VẬT 3D ======
-let character;
-const loader = new THREE.GLTFLoader();
+// Main mountain peak
+const mainPeakGeom = new THREE.ConeGeometry(8, 18, 8);
+const mainPeakMat = new THREE.MeshStandardMaterial({ 
+  color: 0x8b7355,
+  roughness: 0.9,
+  flatShading: true
+});
+const mainPeak = new THREE.Mesh(mainPeakGeom, mainPeakMat);
+mainPeak.position.set(0, 9, 0);
+mainPeak.castShadow = true;
+mountainGroup.add(mainPeak);
 
-loader.load(
-  'https://raw.githubusercontent.com/hoang-mou/mountain-journey/main/assets/character.glb',
-  (gltf) => {
-    character = gltf.scene;
-    const box = new THREE.Box3().setFromObject(character);
-    const size = new THREE.Vector3();
-    box.getSize(size);
-    const targetHeight = 1.6;
-    const scale = targetHeight / (size.y || 1);
-    character.scale.setScalar(scale);
-    character.position.set(2.2, -3.2, 2.2);
-    character.lookAt(0, 3.5, -1);
-    scene.add(character);
-  },
-  (xhr) => {
-    const pct = xhr.total ? (xhr.loaded / xhr.total) * 100 : 0;
-    console.log(`Đang tải mô hình: ${pct.toFixed(0)}%`);
-  },
-  (error) => console.error('Lỗi tải mô hình:', error)
+// Snow cap on top
+const snowCapGeom = new THREE.ConeGeometry(3, 6, 8);
+const snowCapMat = new THREE.MeshStandardMaterial({ 
+  color: 0xffffff,
+  roughness: 0.3,
+  metalness: 0.1
+});
+const snowCap = new THREE.Mesh(snowCapGeom, snowCapMat);
+snowCap.position.set(0, 15, 0);
+mountainGroup.add(snowCap);
+
+// Side peaks for more natural look
+const sidePeak1 = new THREE.Mesh(
+  new THREE.ConeGeometry(5, 12, 7),
+  new THREE.MeshStandardMaterial({ color: 0x8b7355, roughness: 0.9, flatShading: true })
 );
+sidePeak1.position.set(-8, 6, -3);
+sidePeak1.castShadow = true;
+mountainGroup.add(sidePeak1);
 
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+const sidePeak2 = new THREE.Mesh(
+  new THREE.ConeGeometry(4, 10, 6),
+  new THREE.MeshStandardMaterial({ color: 0x8b7355, roughness: 0.9, flatShading: true })
+);
+sidePeak2.position.set(7, 5, -4);
+sidePeak2.castShadow = true;
+mountainGroup.add(sidePeak2);
+
+scene.add(mountainGroup);
+
+// ====== WINDING PATH ======
+const pathPoints = [];
+const pathMarkers = [];
+const checkpoints = [0, 0.25, 0.5, 0.75, 1.0];
+
+for (let i = 0; i <= 100; i++) {
+  const t = i / 100;
+  const angle = t * Math.PI * 3;
+  const radius = 9 * (1 - t * 0.7);
+  const x = Math.cos(angle) * radius;
+  const z = Math.sin(angle) * radius;
+  const y = t * 16;
+  
+  pathPoints.push(new THREE.Vector3(x, y, z));
+  
+  // Add checkpoint markers
+  if (checkpoints.includes(Math.round(t * 100) / 100)) {
+    const markerGeom = new THREE.SphereGeometry(0.3, 8, 8);
+    const markerMat = new THREE.MeshStandardMaterial({ 
+      color: t === 1 ? 0xffd700 : 0x667eea,
+      emissive: t === 1 ? 0xffd700 : 0x667eea,
+      emissiveIntensity: 0.5
+    });
+    const marker = new THREE.Mesh(markerGeom, markerMat);
+    marker.position.copy(pathPoints[pathPoints.length - 1]);
+    scene.add(marker);
+    pathMarkers.push(marker);
+    
+    // Add flag at summit
+    if (t === 1) {
+      const flagPoleGeom = new THREE.CylinderGeometry(0.05, 0.05, 2, 8);
+      const flagPoleMat = new THREE.MeshStandardMaterial({ color: 0x333333 });
+      const flagPole = new THREE.Mesh(flagPoleGeom, flagPoleMat);
+      flagPole.position.set(x, y + 1, z);
+      scene.add(flagPole);
+      
+      const flagGeom = new THREE.PlaneGeometry(1.2, 0.8);
+      const flagMat = new THREE.MeshStandardMaterial({ 
+        color: 0xff4444,
+        side: THREE.DoubleSide
+      });
+      const flag = new THREE.Mesh(flagGeom, flagMat);
+      flag.position.set(x + 0.6, y + 1.6, z);
+      scene.add(flag);
+    }
+  }
+}
+
+// Draw path line
+const pathCurve = new THREE.CatmullRomCurve3(pathPoints);
+const pathGeometry = new THREE.TubeGeometry(pathCurve, 200, 0.15, 8, false);
+const pathMaterial = new THREE.MeshStandardMaterial({ 
+  color: 0xd4a574,
+  roughness: 0.7
+});
+const pathMesh = new THREE.Mesh(pathGeometry, pathMaterial);
+scene.add(pathMesh);
+
+// ====== CHARACTER ======
+let character;
+const characterGeom = new THREE.CylinderGeometry(0.3, 0.3, 1.2, 8);
+const characterMat = new THREE.MeshStandardMaterial({ color: 0x4a90e2 });
+character = new THREE.Mesh(characterGeom, characterMat);
+character.position.copy(pathPoints[0]);
+character.castShadow = true;
+scene.add(character);
+
+// Add simple head
+const headGeom = new THREE.SphereGeometry(0.25, 8, 8);
+const headMat = new THREE.MeshStandardMaterial({ color: 0xffdbac });
+const head = new THREE.Mesh(headGeom, headMat);
+head.position.y = 0.8;
+character.add(head);
+
+// ====== RENDERER ======
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio(window.devicePixelRatio);
-renderer.setClearColor(0xaeecef, 1);
-renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-scene.fog = new THREE.Fog(0xaeecef, 5, 25);
+// ====== ANIMATION ======
+let currentProgress = 0;
 
 function animate() {
   requestAnimationFrame(animate);
-  mountain.rotation.y += 0.003;
+  
+  mountainGroup.rotation.y += 0.001;
+  
+  pathMarkers.forEach((marker, i) => {
+    marker.scale.setScalar(1 + Math.sin(Date.now() * 0.003 + i) * 0.1);
+  });
+  
   renderer.render(scene, camera);
 }
 animate();
 
+// ====== MOVE CHARACTER ======
+function moveCharacterByProgress(percent) {
+  const targetProgress = percent / 100;
+  gsap.to({ progress: currentProgress }, {
+    progress: targetProgress,
+    duration: 2,
+    ease: 'power2.out',
+    onUpdate: function() {
+      currentProgress = this.targets()[0].progress;
+      const pointIndex = Math.floor(currentProgress * (pathPoints.length - 1));
+      const point = pathPoints[pointIndex];
+      
+      if (point && character) {
+        character.position.copy(point);
+        
+        const nextIndex = Math.min(pointIndex + 5, pathPoints.length - 1);
+        const nextPoint = pathPoints[nextIndex];
+        character.lookAt(nextPoint);
+        
+        const cameraTarget = point.clone();
+        cameraTarget.y += 8;
+        cameraTarget.z += 15;
+        cameraTarget.x += 10;
+        
+        gsap.to(camera.position, {
+          x: cameraTarget.x,
+          y: cameraTarget.y,
+          z: cameraTarget.z,
+          duration: 2,
+          ease: 'power2.out'
+        });
+        
+        camera.lookAt(point);
+      }
+    },
+    onComplete: () => {
+      if (percent === 100) {
+        createFireworks();
+      }
+    }
+  });
+}
+
+// ====== FIREWORKS ======
+function createFireworks() {
+  const summit = pathPoints[pathPoints.length - 1];
+  
+  for (let burst = 0; burst < 3; burst++) {
+    setTimeout(() => {
+      const particles = [];
+      for (let i = 0; i < 30; i++) {
+        const particleGeom = new THREE.SphereGeometry(0.15, 4, 4);
+        const particleMat = new THREE.MeshBasicMaterial({ 
+          color: Math.random() * 0xffffff 
+        });
+        const particle = new THREE.Mesh(particleGeom, particleMat);
+        particle.position.copy(summit);
+        
+        const angle = Math.random() * Math.PI * 2;
+        const elevation = Math.random() * Math.PI * 0.5;
+        const speed = 2 + Math.random() * 2;
+        
+        particle.userData.velocity = {
+          x: Math.cos(angle) * Math.cos(elevation) * speed,
+          y: Math.sin(elevation) * speed + 2,
+          z: Math.sin(angle) * Math.cos(elevation) * speed
+        };
+        
+        scene.add(particle);
+        particles.push(particle);
+      }
+      
+      let frame = 0;
+      const animateParticles = () => {
+        frame++;
+        let allGone = true;
+        
+        particles.forEach(p => {
+          if (p.position.y > summit.y - 5) {
+            p.position.x += p.userData.velocity.x * 0.1;
+            p.position.y += p.userData.velocity.y * 0.1;
+            p.position.z += p.userData.velocity.z * 0.1;
+            p.userData.velocity.y -= 0.1;
+            p.material.opacity = Math.max(0, 1 - frame / 60);
+            p.material.transparent = true;
+            allGone = false;
+          }
+        });
+        
+        if (!allGone && frame < 100) {
+          requestAnimationFrame(animateParticles);
+        } else {
+          particles.forEach(p => scene.remove(p));
+        }
+      };
+      animateParticles();
+    }, burst * 300);
+  }
+}
+
+// ====== RESIZE ======
 window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
@@ -77,10 +287,9 @@ window.addEventListener('resize', () => {
 
 
 // =============================================================
-// 🧩 UI & GOALS — Enhanced với Tags, Recurring, Streak
+// 🧩 UI & GOALS MANAGEMENT
 // =============================================================
 
-// 🗂️ DOM elements
 const form = document.getElementById('goalForm');
 const input = document.getElementById('goalInput');
 const dateInput = document.getElementById('goalDate');
@@ -96,22 +305,28 @@ const emailSettingsBtn = document.getElementById('emailSettings');
 const streakDisplay = document.getElementById('streakDisplay');
 const filterTagsDiv = document.getElementById('filterTags');
 
-// 💾 LocalStorage
+// ====== DATA ======
 let goals = JSON.parse(localStorage.getItem('goals')) || [];
 let userEmail = localStorage.getItem('userEmail') || '';
-let streakData = JSON.parse(localStorage.getItem('streakData')) || { current: 0, best: 0, lastDate: null };
+let streakData = JSON.parse(localStorage.getItem('streakData')) || { 
+  current: 0, 
+  best: 0, 
+  lastDate: null 
+};
 
-// 💬 Quotes
+// ====== QUOTES ======
 const quotes = [
   "Không cần nhanh, chỉ cần kiên trì là đủ. 🌱",
   "Một bước nhỏ hôm nay là một chiến thắng. 🏔",
   "Tiếp tục tiến lên, dù chỉ 1%. 💪",
   "Bạn đang làm rất tốt, đừng dừng lại nhé! 🌟",
-  "Mỗi hành trình vĩ đại đều bắt đầu bằng một bước nhỏ."
+  "Mỗi hành trình vĩ đại đều bắt đầu bằng một bước nhỏ.",
+  "Đỉnh núi đang chờ đón bạn! 🏆",
+  "Hôm nay tốt hơn hôm qua một chút thôi cũng đủ. ✨"
 ];
 if (quoteEl) quoteEl.textContent = quotes[Math.floor(Math.random() * quotes.length)];
 
-// ===== Helpers =====
+// ====== HELPERS ======
 function formatDate(dateStr) {
   if (!dateStr) return '';
   const d = new Date(dateStr);
@@ -128,19 +343,21 @@ function getTodayKey() {
   return `${d.getFullYear()}-${m}-${day}`;
 }
 
-// ===== STREAK SYSTEM =====
+// ====== STREAK SYSTEM ======
 function updateStreak() {
   const today = getTodayKey();
   const total = goals.filter(g => !g.recurring || g.date === today).length;
   const done = goals.filter(g => g.done && (!g.recurring || g.date === today)).length;
   const percent = total ? Math.round((done / total) * 100) : 0;
 
-  // Chỉ tính streak nếu hoàn thành >= 80%
   if (percent >= 80) {
     if (streakData.lastDate !== today) {
       const yesterday = new Date();
       yesterday.setDate(yesterday.getDate() - 1);
-      const yesterdayKey = getTodayKey.call(yesterday);
+      const yy = yesterday.getFullYear();
+      const mm = String(yesterday.getMonth() + 1).padStart(2, '0');
+      const dd = String(yesterday.getDate()).padStart(2, '0');
+      const yesterdayKey = `${yy}-${mm}-${dd}`;
 
       if (streakData.lastDate === yesterdayKey) {
         streakData.current++;
@@ -161,13 +378,13 @@ function updateStreak() {
     streakDisplay.innerHTML = `
       <div style="display:flex;justify-content:space-between;align-items:center;">
         <span>🔥 Streak: <strong>${streakData.current}</strong> ngày</span>
-        <span style="font-size:0.85rem;color:#888;">🏆 Best: ${streakData.best}</span>
+        <span style="font-size:0.85rem;color:#fff9;">🏆 Best: ${streakData.best}</span>
       </div>
     `;
   }
 }
 
-// ===== RECURRING GOALS =====
+// ====== RECURRING GOALS ======
 function checkRecurringGoals() {
   const today = getTodayKey();
   let needUpdate = false;
@@ -175,13 +392,11 @@ function checkRecurringGoals() {
   goals.forEach(goal => {
     if (!goal.recurring || goal.recurring === 'none') return;
 
-    // Kiểm tra xem đã tạo instance hôm nay chưa
     const todayInstance = goals.find(g => 
       g.parentId === goal.id && g.date === today
     );
 
     if (!todayInstance) {
-      // Tạo instance mới cho hôm nay
       const newInstance = {
         ...goal,
         id: Date.now() + Math.random(),
@@ -202,7 +417,7 @@ function checkRecurringGoals() {
   }
 }
 
-// ===== TAGS SYSTEM =====
+// ====== TAGS SYSTEM ======
 function getAllTags() {
   const tags = new Set();
   goals.forEach(g => {
@@ -242,20 +457,18 @@ window.filterByTag = function(tag) {
   renderTagFilters();
 };
 
-// ===== Render goals =====
+// ====== RENDER GOALS ======
 function renderGoals() {
   const today = getTodayKey();
   list.innerHTML = '';
 
   let filteredGoals = goals.filter(g => {
-    // Chỉ hiện goals hôm nay hoặc recurring templates
     if (g.isInstance && g.date !== today) return false;
     if (g.recurring && g.recurring !== 'none' && !g.isInstance) return true;
     if (!g.recurring || g.recurring === 'none') return true;
     return false;
   });
 
-  // Filter by tag
   if (activeTagFilter) {
     filteredGoals = filteredGoals.filter(g => 
       g.tags && g.tags.includes(activeTagFilter)
@@ -263,12 +476,12 @@ function renderGoals() {
   }
 
   if (filteredGoals.length === 0) {
-    list.innerHTML = '<li style="text-align:center;color:#888;">Chưa có mục tiêu nào 🎯</li>';
+    list.innerHTML = '<li style="text-align:center;color:#888;padding:20px;">Chưa có mục tiêu nào 🎯</li>';
     updateProgress();
     return;
   }
 
-  filteredGoals.forEach((goal, index) => {
+  filteredGoals.forEach((goal) => {
     const actualIndex = goals.indexOf(goal);
     const li = document.createElement('li');
 
@@ -296,10 +509,10 @@ function renderGoals() {
         ${timeInfo}
       </div>
       <div style="display:flex;gap:6px;">
-        <button onclick="toggleGoal(${actualIndex})" style="background:${goal.done ? '#6c757d' : '#28a745'};">
+        <button onclick="toggleGoal(${actualIndex})" style="background:${goal.done ? '#6c757d' : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'};">
           ${goal.done ? '↩️' : '✅'}
         </button>
-        ${!goal.isInstance ? `<button onclick="deleteGoal(${actualIndex})" style="background:#dc3545;">🗑️</button>` : ''}
+        ${!goal.isInstance ? `<button onclick="deleteGoal(${actualIndex})" style="background:linear-gradient(135deg, #eb3349 0%, #f45c43 100%);">🗑️</button>` : ''}
       </div>
     `;
 
@@ -311,7 +524,7 @@ function renderGoals() {
   renderTagFilters();
 }
 
-// ===== Thêm mục tiêu =====
+// ====== ADD GOAL ======
 form.addEventListener('submit', (e) => {
   e.preventDefault();
   const text = input.value.trim();
@@ -348,7 +561,7 @@ form.addEventListener('submit', (e) => {
   showNotification('🎯 Mục tiêu đã được thêm!', 'success');
 });
 
-// ===== Toggle & Delete =====
+// ====== TOGGLE & DELETE ======
 window.toggleGoal = function(index) {
   goals[index].done = !goals[index].done;
   localStorage.setItem('goals', JSON.stringify(goals));
@@ -359,7 +572,6 @@ window.toggleGoal = function(index) {
 window.deleteGoal = function(index) {
   if (confirm('❓ Bạn có chắc muốn xóa?')) {
     const goal = goals[index];
-    // Xóa cả instances nếu là recurring
     if (goal.recurring && goal.recurring !== 'none') {
       goals = goals.filter(g => g.parentId !== goal.id && g.id !== goal.id);
     } else {
@@ -371,7 +583,7 @@ window.deleteGoal = function(index) {
   }
 };
 
-// ===== Progress =====
+// ====== PROGRESS ======
 function updateProgress() {
   const today = getTodayKey();
   const todayGoals = goals.filter(g => 
@@ -386,17 +598,10 @@ function updateProgress() {
   progressText.textContent = `${percent}% hoàn thành (${done}/${total} mục tiêu)`;
 
   moveCharacterByProgress(percent);
+  persistDailyProgress(percent);
 }
 
-function moveCharacterByProgress(percent) {
-  if (!character) return;
-  const baseY = -3.2;
-  const climbHeight = 6;
-  const newY = baseY + (percent / 100) * climbHeight;
-  gsap.to(character.position, { y: newY, duration: 1, ease: 'power2.out' });
-}
-
-// ===== Notification =====
+// ====== NOTIFICATION ======
 function showNotification(message, type = 'info') {
   const el = document.createElement('div');
   el.className = `notification notification-${type}`;
@@ -409,16 +614,9 @@ function showNotification(message, type = 'info') {
   }, 3000);
 }
 
-// ===== Init =====
-checkRecurringGoals();
-renderGoals();
-
-// Check recurring mỗi giờ
-setInterval(checkRecurringGoals, 60 * 60 * 1000);
-
 
 // =============================================================
-// 📊 Charts
+// 📊 CHARTS
 // =============================================================
 
 const tabToday = document.getElementById('tab-today');
@@ -472,17 +670,23 @@ function renderChart(mode = 'today') {
     const total = goals.length;
     const done = goals.filter(g => g.done).length;
     const percent = total ? Math.round((done / total) * 100) : 0;
-    labels = ['% hoàn thành'];
+    labels = ['Tiến độ'];
     data = [percent];
-    title = 'Hôm nay';
+    title = '🎯 Hôm nay';
   } else if (mode === 'week') {
-    labels = getLastNDaysLabels(7);
-    data = buildSeriesFor(labels);
-    title = '7 ngày qua';
+    labels = getLastNDaysLabels(7).map(d => {
+      const parts = d.split('-');
+      return `${parts[2]}/${parts[1]}`;
+    });
+    data = buildSeriesFor(getLastNDaysLabels(7));
+    title = '📅 7 ngày qua';
   } else {
-    labels = getLastNDaysLabels(30);
-    data = buildSeriesFor(labels);
-    title = '30 ngày qua';
+    labels = getLastNDaysLabels(30).map(d => {
+      const parts = d.split('-');
+      return `${parts[2]}/${parts[1]}`;
+    });
+    data = buildSeriesFor(getLastNDaysLabels(30));
+    title = '📈 30 ngày qua';
   }
 
   if (progressChart) progressChart.destroy();
@@ -494,9 +698,15 @@ function renderChart(mode = 'today') {
       datasets: [{
         label: 'Tiến độ (%)',
         data,
+        backgroundColor: mode === 'today' 
+          ? 'rgba(102, 126, 234, 0.8)' 
+          : 'rgba(102, 126, 234, 0.2)',
+        borderColor: 'rgb(102, 126, 234)',
         borderWidth: 2,
-        tension: 0.25,
-        pointRadius: mode === 'today' ? 0 : 3
+        tension: 0.4,
+        pointRadius: mode === 'today' ? 0 : 4,
+        pointBackgroundColor: 'rgb(102, 126, 234)',
+        fill: true
       }]
     },
     options: {
@@ -504,10 +714,23 @@ function renderChart(mode = 'today') {
       maintainAspectRatio: false,
       plugins: {
         legend: { display: false },
-        title: { display: true, text: title }
+        title: { 
+          display: true, 
+          text: title,
+          font: { size: 14, weight: 'bold' },
+          color: '#333'
+        }
       },
       scales: {
-        y: { suggestedMin: 0, suggestedMax: 100, ticks: { stepSize: 20 } }
+        y: { 
+          suggestedMin: 0, 
+          suggestedMax: 100, 
+          ticks: { stepSize: 20 },
+          grid: { color: 'rgba(0,0,0,0.05)' }
+        },
+        x: {
+          grid: { display: false }
+        }
       }
     }
   });
@@ -522,22 +745,9 @@ if (tabToday) tabToday.addEventListener('click', () => { setActiveTab(tabToday);
 if (tabWeek) tabWeek.addEventListener('click', () => { setActiveTab(tabWeek); renderChart('week'); });
 if (tabMonth) tabMonth.addEventListener('click', () => { setActiveTab(tabMonth); renderChart('month'); });
 
-const originalUpdateProgress = updateProgress;
-window.updateProgress = function() {
-  originalUpdateProgress();
-  const total = goals.length;
-  const done = goals.filter(g => g.done).length;
-  const percent = total ? Math.round((done / total) * 100) : 0;
-  persistDailyProgress(percent);
-  if (tabToday && tabToday.classList.contains('active')) renderChart('today');
-};
-
-setActiveTab(tabToday);
-renderChart('today');
-
 
 // =============================================================
-// 📧 Email Notification
+// 📧 EMAIL NOTIFICATION
 // =============================================================
 
 const EMAILJS_SERVICE_ID = 'service_4yfpzaq';
@@ -554,11 +764,11 @@ try {
 }
 
 function setupUserEmail() {
-  const email = prompt('📧 Nhập email:', userEmail || '');
+  const email = prompt('📧 Nhập email để nhận thông báo:', userEmail || '');
   if (email && email.includes('@')) {
     userEmail = email.trim();
     localStorage.setItem('userEmail', userEmail);
-    showNotification('✅ Đã lưu email', 'success');
+    showNotification('✅ Đã lưu email thành công!', 'success');
   } else if (email !== null) {
     alert('⚠️ Email không hợp lệ');
   }
@@ -568,9 +778,9 @@ if (emailSettingsBtn) emailSettingsBtn.addEventListener('click', setupUserEmail)
 
 if (!userEmail) {
   setTimeout(() => {
-    const want = confirm('🏔️ Mountain Journey\n\nNhận thông báo email?');
+    const want = confirm('🏔️ Mountain Journey\n\nBạn có muốn nhận thông báo email cho mục tiêu của mình không?');
     if (want) setupUserEmail();
-  }, 1200);
+  }, 1500);
 }
 
 async function sendReminderEmail(goal) {
@@ -582,9 +792,9 @@ async function sendReminderEmail(goal) {
       goal_time: `${goal.date} lúc ${goal.time}`,
       message: `🏔️ Nhắc nhở: "${goal.text}"`
     });
-    showNotification('📧 Email đã gửi!', 'success');
+    showNotification('📧 Email nhắc nhở đã được gửi!', 'success');
   } catch (err) {
-    console.error('Email error:', err);
+    console.error('❌ Email error:', err);
   }
 }
 
@@ -605,3 +815,15 @@ function checkScheduledNotifications() {
 
 setInterval(checkScheduledNotifications, 60000);
 checkScheduledNotifications();
+
+
+// =============================================================
+// 🚀 INITIALIZATION
+// =============================================================
+
+checkRecurringGoals();
+renderGoals();
+setActiveTab(tabToday);
+renderChart('today');
+
+setInterval(checkRecurringGoals, 60 * 60 * 1000);
