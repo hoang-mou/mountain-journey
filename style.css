@@ -7,7 +7,7 @@
 
 body {
   font-family: 'Poppins', sans-serif;
-  background: linear-gradient(to top, #a8edea, #fed6e3);
+  background: linear-gradient(to bottom, #87ceeb 0%, #f0e68c 50%, #8fbc8f 100%);
   overflow: hidden;
   color: #222;
   height: 100vh;
@@ -26,72 +26,78 @@ body {
 /* ====== UI OVERLAY ====== */
 .ui {
   position: fixed;
-  bottom: 40px;
-  left: 40px;
+  top: 20px;
+  right: 20px;
   width: 420px;
-  max-height: 88vh;
+  max-height: calc(100vh - 40px);
   overflow-y: auto;
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(12px);
-  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(16px);
+  border-radius: 20px;
   padding: 24px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
   z-index: 10;
 }
 
 /* ====== HEADER ====== */
 .ui-header {
   text-align: center;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
   position: relative;
 }
 
 .ui-header h1 {
   font-weight: 700;
-  font-size: 1.4rem;
-  color: #333;
+  font-size: 1.6rem;
+  color: #2c3e50;
+  margin-bottom: 4px;
 }
 
 .ui-header .subtitle {
-  font-size: 0.88rem;
-  color: #666;
-  margin-top: 2px;
+  font-size: 0.9rem;
+  color: #7f8c8d;
 }
 
 .email-settings-btn {
   position: absolute;
   top: 0;
   right: 0;
-  background: #5a9fd4;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
   border-radius: 50%;
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   cursor: pointer;
   font-size: 1.1rem;
   transition: all 0.3s;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
 .email-settings-btn:hover {
-  background: #4a8fc4;
-  transform: rotate(15deg);
+  transform: rotate(90deg) scale(1.1);
 }
 
 /* ====== STREAK DISPLAY ====== */
 .streak-display {
-  background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
   color: white;
-  padding: 12px 16px;
-  border-radius: 10px;
-  margin-bottom: 16px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  margin-bottom: 18px;
   font-size: 0.95rem;
-  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+  box-shadow: 0 6px 20px rgba(245, 87, 108, 0.3);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
 }
 
 /* ====== FORM NHẬP MỤC TIÊU ====== */
 .goal-input {
-  margin-bottom: 14px;
+  margin-bottom: 16px;
 }
 
 .goal-input input[type="text"],
@@ -99,95 +105,100 @@ body {
 .goal-input input[type="time"],
 .goal-input select {
   width: 100%;
-  padding: 9px 12px;
-  border: 2px solid #ddd;
-  border-radius: 8px;
+  padding: 11px 14px;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
   font-size: 0.92rem;
-  margin-bottom: 8px;
-  transition: border 0.3s;
+  margin-bottom: 10px;
+  transition: all 0.3s;
   font-family: inherit;
+  background: white;
 }
 
 .goal-input input:focus,
 .goal-input select:focus {
   outline: none;
-  border-color: #6a994e;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 .time-inputs {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin-bottom: 8px;
+  gap: 10px;
+  margin-bottom: 10px;
 }
 
 .email-notification {
   display: flex;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   font-size: 0.88rem;
+  color: #555;
 }
 
 .email-notification input[type="checkbox"] {
   margin-right: 8px;
-  width: 17px;
-  height: 17px;
+  width: 18px;
+  height: 18px;
   cursor: pointer;
 }
 
 .goal-input button[type="submit"] {
   width: 100%;
-  padding: 11px;
-  background: #6a994e;
+  padding: 13px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
-  border-radius: 8px;
-  font-size: 0.98rem;
+  border-radius: 10px;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
 }
 
 .goal-input button[type="submit"]:hover {
-  background: #58873f;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(106, 153, 78, 0.3);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
 }
 
 /* ====== TAG FILTERS ====== */
 .tag-filters {
-  margin-bottom: 12px;
+  margin-bottom: 14px;
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 8px;
 }
 
 .tag-filter {
-  padding: 5px 12px;
-  border: 1px solid #ddd;
-  background: #f8f9fa;
+  padding: 6px 14px;
+  border: 2px solid #e0e0e0;
+  background: white;
   border-radius: 20px;
   font-size: 0.82rem;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s;
+  font-weight: 500;
 }
 
 .tag-filter:hover {
-  background: #e9ecef;
+  background: #f5f5f5;
+  border-color: #667eea;
 }
 
 .tag-filter.active {
-  background: #6a994e;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
-  border-color: #6a994e;
+  border-color: transparent;
 }
 
 /* ====== DANH SÁCH MỤC TIÊU ====== */
 .goal-list ul {
   list-style: none;
   padding: 0;
-  margin: 0 0 14px 0;
-  max-height: 260px;
+  margin: 0 0 16px 0;
+  max-height: 280px;
   overflow-y: auto;
 }
 
@@ -195,127 +206,157 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #f8f9fa;
-  border-radius: 8px;
-  padding: 11px;
-  margin: 7px 0;
+  background: white;
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin: 8px 0;
   font-size: 0.9rem;
   transition: all 0.3s;
-  border-left: 4px solid #6a994e;
+  border-left: 4px solid #667eea;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
 .goal-list li:hover {
-  background: #e9ecef;
   transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
 }
 
 .goal-list button {
-  background: #6a994e;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
-  border-radius: 6px;
-  padding: 6px 10px;
+  border-radius: 8px;
+  padding: 8px 12px;
   cursor: pointer;
   font-size: 1rem;
   transition: all 0.2s;
-  min-width: 36px;
+  min-width: 38px;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
 }
 
 .goal-list button:hover {
-  transform: scale(1.08);
+  transform: scale(1.1);
 }
 
 .goal-tag {
   display: inline-block;
-  background: #e3f2fd;
-  color: #1976d2;
-  padding: 2px 8px;
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+  color: #333;
+  padding: 3px 10px;
   border-radius: 12px;
   font-size: 0.75rem;
   margin-right: 4px;
+  font-weight: 500;
 }
 
 /* ====== THANH TIẾN ĐỘ ====== */
 .progress {
-  margin: 14px 0;
+  margin: 16px 0;
+  padding: 16px;
+  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+  border-radius: 14px;
+  box-shadow: 0 4px 15px rgba(252, 182, 159, 0.3);
 }
 
 .progress label {
-  font-size: 0.88rem;
-  color: #555;
-  font-weight: 500;
+  font-size: 0.9rem;
+  color: #333;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 10px;
 }
 
 .progress-bar {
   width: 100%;
-  height: 11px;
-  background: #e5e5e5;
+  height: 14px;
+  background: rgba(255, 255, 255, 0.5);
   border-radius: 10px;
   overflow: hidden;
-  margin: 7px 0;
+  margin: 10px 0;
   box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
 }
 
 #progressFill {
   height: 100%;
   width: 0%;
-  background: linear-gradient(90deg, #6a994e, #a7c957);
-  transition: width 0.5s ease;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+#progressFill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
 }
 
 #progressText {
-  font-size: 0.82rem;
-  text-align: right;
-  color: #444;
+  font-size: 0.85rem;
+  text-align: center;
+  color: #333;
   font-weight: 600;
+  margin-top: 6px;
 }
 
 /* ====== QUOTE ====== */
 .daily-quote {
-  margin: 14px 0;
-  padding: 11px;
-  background: rgba(106, 153, 78, 0.1);
-  border-radius: 8px;
+  margin: 16px 0;
+  padding: 14px;
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+  border-radius: 12px;
   font-style: italic;
-  color: #555;
+  color: #444;
   text-align: center;
   font-size: 0.88rem;
+  box-shadow: 0 4px 15px rgba(168, 237, 234, 0.3);
 }
 
 /* ====== TABS ====== */
 .ui-tabs {
   display: flex;
-  gap: 6px;
-  margin: 12px 0 8px;
+  gap: 8px;
+  margin: 16px 0 12px;
 }
 
 .ui-tabs button {
   flex: 1;
-  padding: 8px 0;
+  padding: 10px 0;
   border: none;
-  border-radius: 6px;
-  background: #ddd;
+  border-radius: 10px;
+  background: #e0e0e0;
   font-size: 0.88rem;
   cursor: pointer;
-  transition: all 0.25s;
+  transition: all 0.3s;
+  font-weight: 500;
 }
 
 .ui-tabs button.active {
-  background: #6a994e;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: #fff;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
-.ui-tabs button:hover {
-  background: #a7c957;
-  color: #fff;
+.ui-tabs button:hover:not(.active) {
+  background: #d0d0d0;
 }
+
 /* ====== STATS / CHART ====== */
 .stats {
-  background: #fff;
-  border-radius: 10px;
-  padding: 10px;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
-  height: 170px;
+  background: white;
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  height: 200px;
 }
 
 .stats canvas {
@@ -328,14 +369,14 @@ body {
   position: fixed;
   top: 20px;
   right: 20px;
-  padding: 14px 22px;
-  border-radius: 8px;
+  padding: 16px 24px;
+  border-radius: 12px;
   color: white;
   font-weight: 500;
   z-index: 1000;
   transform: translateX(400px);
-  transition: transform 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
 }
 
 .notification.show {
@@ -343,27 +384,27 @@ body {
 }
 
 .notification-success {
-  background: #28a745;
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
 }
 
 .notification-error {
-  background: #dc3545;
+  background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
 }
 
 .notification-info {
-  background: #17a2b8;
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
 }
 
 /* ====== SCROLLBAR ====== */
 .ui::-webkit-scrollbar,
 .goal-list ul::-webkit-scrollbar {
-  width: 7px;
+  width: 8px;
 }
 
 .ui::-webkit-scrollbar-thumb,
 .goal-list ul::-webkit-scrollbar-thumb {
-  background: rgba(0,0,0,0.15);
-  border-radius: 8px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 10px;
 }
 
 .ui::-webkit-scrollbar-track,
@@ -374,20 +415,15 @@ body {
 /* ====== RESPONSIVE ====== */
 @media (max-width: 600px) {
   .ui {
-    left: 50%;
-    bottom: 15px;
-    transform: translateX(-50%);
-    width: 94vw;
-    max-height: 82vh;
+    right: 10px;
+    top: 10px;
+    width: calc(100vw - 20px);
+    max-height: calc(100vh - 20px);
     padding: 18px;
   }
 
   .ui-header h1 {
-    font-size: 1.25rem;
-  }
-
-  .ui-header .subtitle {
-    font-size: 0.82rem;
+    font-size: 1.3rem;
   }
 
   .time-inputs {
@@ -399,7 +435,7 @@ body {
   }
 
   .stats {
-    height: 150px;
+    height: 160px;
   }
 }
 
@@ -415,8 +451,13 @@ body.dark .ui {
   border: 1px solid rgba(255,255,255,0.06);
 }
 
-body.dark .ui-header h1 { color: #e9eef3; }
-body.dark .ui-header .subtitle { color: #a7b1bb; }
+body.dark .ui-header h1 { 
+  color: #e9eef3; 
+}
+
+body.dark .ui-header .subtitle { 
+  color: #a7b1bb; 
+}
 
 body.dark .goal-input input,
 body.dark .goal-input select {
