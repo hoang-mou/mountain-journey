@@ -23,7 +23,7 @@
     <header class="ui-header">
       <button id="emailSettings" class="email-settings-btn" title="Cấu hình email">⚙️</button>
       <h1>🏔 Mountain Journey</h1>
-      <p class="subtitle">Mỗi bước nhỏ đưa bạn gần hơn tới đỉnh.</p>
+      <p class="subtitle">Mỗi bước nhỏ đưa bạn gần hơn tới đỉnh</p>
     </header>
 
     <!-- Streak Display -->
@@ -67,7 +67,7 @@
           <label for="emailNotification">📧 Gửi email nhắc nhở (trước 30 phút)</label>
         </div>
 
-        <button type="submit">Thêm mục tiêu</button>
+        <button type="submit">✨ Thêm mục tiêu</button>
       </form>
     </section>
 
@@ -81,11 +81,11 @@
 
     <!-- Thanh tiến độ -->
     <section class="progress">
-      <label>Tiến độ leo núi hôm nay:</label>
+      <label>🎯 Tiến độ leo núi hôm nay</label>
       <div class="progress-bar">
         <div id="progressFill"></div>
       </div>
-      <p id="progressText">0% hoàn thành</p>
+      <p id="progressText">0% hoàn thành (0/0 mục tiêu)</p>
     </section>
 
     <!-- Quote động viên -->
@@ -101,8 +101,8 @@
     </nav>
 
     <!-- Biểu đồ -->
-    <section class="stats" id="stats">
-      <canvas id="chartCanvas" height="160"></canvas>
+    <section class="stats">
+      <canvas id="chartCanvas"></canvas>
     </section>
   </div>
 
@@ -112,6 +112,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-  <script src="script.js" defer></script>
+  <script src="script.js"></script>
 </body>
 </html>
