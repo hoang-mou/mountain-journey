@@ -7,7 +7,13 @@ const scene = new THREE.Scene();
 scene.fog = new THREE.Fog(0x87ceeb, 30, 100);
 
 const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.set(15, 12, 25);
+// Điều chỉnh camera cho phù hợp với mobile và desktop
+const isMobile = window.innerWidth < 768;
+if (isMobile) {
+  camera.position.set(20, 10, 30);
+} else {
+  camera.position.set(15, 12, 25);
+}
 camera.lookAt(0, 5, 0);
 
 // ====== LIGHTING ======
