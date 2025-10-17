@@ -20,7 +20,6 @@ body {
   left: 0;
   width: 100vw;
   height: 100vh;
-  display: block;
   z-index: 0;
 }
 
@@ -29,10 +28,10 @@ body {
   position: fixed;
   bottom: 40px;
   left: 40px;
-  width: 400px;
-  max-height: 85vh;
+  width: 420px;
+  max-height: 88vh;
   overflow-y: auto;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(12px);
   border-radius: 16px;
   padding: 24px;
@@ -43,20 +42,20 @@ body {
 /* ====== HEADER ====== */
 .ui-header {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   position: relative;
 }
 
 .ui-header h1 {
   font-weight: 700;
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   color: #333;
 }
 
 .ui-header .subtitle {
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   color: #666;
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
 .email-settings-btn {
@@ -67,10 +66,10 @@ body {
   color: white;
   border: none;
   border-radius: 50%;
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   cursor: pointer;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   transition: all 0.3s;
 }
 
@@ -79,22 +78,38 @@ body {
   transform: rotate(15deg);
 }
 
+/* ====== STREAK DISPLAY ====== */
+.streak-display {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
+  color: white;
+  padding: 12px 16px;
+  border-radius: 10px;
+  margin-bottom: 16px;
+  font-size: 0.95rem;
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+}
+
 /* ====== FORM NHẬP MỤC TIÊU ====== */
 .goal-input {
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 
-.goal-input input[type="text"] {
+.goal-input input[type="text"],
+.goal-input input[type="date"],
+.goal-input input[type="time"],
+.goal-input select {
   width: 100%;
-  padding: 10px 12px;
+  padding: 9px 12px;
   border: 2px solid #ddd;
   border-radius: 8px;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   margin-bottom: 8px;
   transition: border 0.3s;
+  font-family: inherit;
 }
 
-.goal-input input[type="text"]:focus {
+.goal-input input:focus,
+.goal-input select:focus {
   outline: none;
   border-color: #6a994e;
 }
@@ -106,35 +121,28 @@ body {
   margin-bottom: 8px;
 }
 
-.time-inputs input {
-  padding: 8px 10px;
-  border: 2px solid #ddd;
-  border-radius: 6px;
-  font-size: 0.85rem;
-}
-
 .email-notification {
   display: flex;
   align-items: center;
-  margin-bottom: 12px;
-  font-size: 0.9rem;
+  margin-bottom: 10px;
+  font-size: 0.88rem;
 }
 
 .email-notification input[type="checkbox"] {
   margin-right: 8px;
-  width: 18px;
-  height: 18px;
+  width: 17px;
+  height: 17px;
   cursor: pointer;
 }
 
 .goal-input button[type="submit"] {
   width: 100%;
-  padding: 12px;
+  padding: 11px;
   background: #6a994e;
   color: white;
   border: none;
   border-radius: 8px;
-  font-size: 1rem;
+  font-size: 0.98rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s;
@@ -146,12 +154,40 @@ body {
   box-shadow: 0 4px 12px rgba(106, 153, 78, 0.3);
 }
 
+/* ====== TAG FILTERS ====== */
+.tag-filters {
+  margin-bottom: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag-filter {
+  padding: 5px 12px;
+  border: 1px solid #ddd;
+  background: #f8f9fa;
+  border-radius: 20px;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tag-filter:hover {
+  background: #e9ecef;
+}
+
+.tag-filter.active {
+  background: #6a994e;
+  color: white;
+  border-color: #6a994e;
+}
+
 /* ====== DANH SÁCH MỤC TIÊU ====== */
 .goal-list ul {
   list-style: none;
   padding: 0;
-  margin: 0 0 16px 0;
-  max-height: 280px;
+  margin: 0 0 14px 0;
+  max-height: 260px;
   overflow-y: auto;
 }
 
@@ -161,8 +197,8 @@ body {
   align-items: center;
   background: #f8f9fa;
   border-radius: 8px;
-  padding: 12px;
-  margin: 8px 0;
+  padding: 11px;
+  margin: 7px 0;
   font-size: 0.9rem;
   transition: all 0.3s;
   border-left: 4px solid #6a994e;
@@ -182,30 +218,41 @@ body {
   cursor: pointer;
   font-size: 1rem;
   transition: all 0.2s;
+  min-width: 36px;
 }
 
 .goal-list button:hover {
-  transform: scale(1.1);
+  transform: scale(1.08);
+}
+
+.goal-tag {
+  display: inline-block;
+  background: #e3f2fd;
+  color: #1976d2;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  margin-right: 4px;
 }
 
 /* ====== THANH TIẾN ĐỘ ====== */
 .progress {
-  margin: 16px 0;
+  margin: 14px 0;
 }
 
 .progress label {
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   color: #555;
   font-weight: 500;
 }
 
 .progress-bar {
   width: 100%;
-  height: 12px;
+  height: 11px;
   background: #e5e5e5;
   border-radius: 10px;
   overflow: hidden;
-  margin: 8px 0;
+  margin: 7px 0;
   box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
 }
 
@@ -217,7 +264,7 @@ body {
 }
 
 #progressText {
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   text-align: right;
   color: #444;
   font-weight: 600;
@@ -225,14 +272,55 @@ body {
 
 /* ====== QUOTE ====== */
 .daily-quote {
-  margin: 16px 0;
-  padding: 12px;
+  margin: 14px 0;
+  padding: 11px;
   background: rgba(106, 153, 78, 0.1);
   border-radius: 8px;
   font-style: italic;
   color: #555;
   text-align: center;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
+}
+
+/* ====== TABS ====== */
+.ui-tabs {
+  display: flex;
+  gap: 6px;
+  margin: 12px 0 8px;
+}
+
+.ui-tabs button {
+  flex: 1;
+  padding: 8px 0;
+  border: none;
+  border-radius: 6px;
+  background: #ddd;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+
+.ui-tabs button.active {
+  background: #6a994e;
+  color: #fff;
+}
+
+.ui-tabs button:hover {
+  background: #a7c957;
+  color: #fff;
+}
+/* ====== STATS / CHART ====== */
+.stats {
+  background: #fff;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
+  height: 170px;
+}
+
+.stats canvas {
+  width: 100% !important;
+  height: 100% !important;
 }
 
 /* ====== NOTIFICATION ====== */
@@ -240,7 +328,7 @@ body {
   position: fixed;
   top: 20px;
   right: 20px;
-  padding: 16px 24px;
+  padding: 14px 22px;
   border-radius: 8px;
   color: white;
   font-weight: 500;
@@ -265,203 +353,96 @@ body {
 .notification-info {
   background: #17a2b8;
 }
-/* ====== TABS & STATS (mới) ====== */
-.ui-tabs {
-  display: flex;
-  gap: 6px;
-  margin: 14px 0 8px;
-}
-.ui-tabs button {
-  flex: 1;
-  padding: 8px 0;
-  border: none;
-  border-radius: 6px;
-  background: #ddd;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all 0.25s ease;
-}
-.ui-tabs button.active {
-  background: #6a994e;
-  color: #fff;
-}
-.ui-tabs button:hover {
-  background: #a7c957;
-  color: #fff;
-}
 
-/* Khu biểu đồ */
-.stats {
-  background: #fff;
-  border-radius: 10px;
-  padding: 10px;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
-  height: 180px; /* tạo không gian cho canvas */
-  overflow: hidden;
-}
-.stats canvas {
-  width: 100% !important;
-  height: 100% !important;
-  display: block;
-}
-
-/* Cải thiện nút trong goal-list (đồng bộ style) */
-.goal-list button {
-  min-width: 36px;
-  line-height: 1;
-}
-
-/* Thanh cuộn gọn gàng trong .ui và .goal-list */
+/* ====== SCROLLBAR ====== */
 .ui::-webkit-scrollbar,
 .goal-list ul::-webkit-scrollbar {
-  width: 8px;
+  width: 7px;
 }
+
 .ui::-webkit-scrollbar-thumb,
 .goal-list ul::-webkit-scrollbar-thumb {
   background: rgba(0,0,0,0.15);
   border-radius: 8px;
 }
+
 .ui::-webkit-scrollbar-track,
 .goal-list ul::-webkit-scrollbar-track {
   background: transparent;
 }
+
 /* ====== RESPONSIVE ====== */
 @media (max-width: 600px) {
   .ui {
     left: 50%;
-    bottom: 20px;
+    bottom: 15px;
     transform: translateX(-50%);
-    width: 92vw;
-    max-height: 80vh;
-    padding: 16px;
+    width: 94vw;
+    max-height: 82vh;
+    padding: 18px;
   }
 
   .ui-header h1 {
     font-size: 1.25rem;
   }
-  .ui-header .subtitle {
-    font-size: 0.85rem;
-  }
 
-  .goal-input input[type="text"] {
-    font-size: 0.95rem;
+  .ui-header .subtitle {
+    font-size: 0.82rem;
   }
 
   .time-inputs {
-    grid-template-columns: 1fr; /* stack date & time */
+    grid-template-columns: 1fr;
   }
 
   .goal-list ul {
-    max-height: 240px;
+    max-height: 220px;
   }
 
   .stats {
-    height: 160px;
+    height: 150px;
   }
 }
-/* ====== DARK MODE ====== */
-/* Bật bằng: <body class="dark"> ... */
+
+/* ====== DARK MODE (Optional) ====== */
 body.dark {
   background: radial-gradient(1200px 800px at 20% 110%, #1b2735 0%, #090a0f 60%);
   color: #e9eef3;
 }
 
-/* Canvas giữ nguyên, UI đổi nền + viền nhẹ */
 body.dark .ui {
   background: rgba(20, 24, 28, 0.85);
   box-shadow: 0 8px 32px rgba(0,0,0,0.4);
   border: 1px solid rgba(255,255,255,0.06);
 }
 
-/* Header */
 body.dark .ui-header h1 { color: #e9eef3; }
 body.dark .ui-header .subtitle { color: #a7b1bb; }
 
-/* Nút settings */
-body.dark .email-settings-btn {
-  background: #3b82f6;
-}
-body.dark .email-settings-btn:hover {
-  background: #2563eb;
-}
-
-/* Form & inputs */
-body.dark .goal-input input[type="text"],
-body.dark .time-inputs input {
+body.dark .goal-input input,
+body.dark .goal-input select {
   background: #101418;
   border-color: #2a2f36;
   color: #e9eef3;
 }
-body.dark .goal-input input[type="text"]:focus {
-  border-color: #6a994e;
-}
 
-/* Checkbox label */
-body.dark .email-notification { color: #c6d0da; }
-
-/* Submit */
-body.dark .goal-input button[type="submit"] {
-  background: #6a994e;
-  color: #fff;
-}
-body.dark .goal-input button[type="submit"]:hover {
-  background: #5b8643;
-  box-shadow: 0 4px 12px rgba(106,153,78,0.25);
-}
-
-/* Goal list */
 body.dark .goal-list li {
   background: #12161b;
-  border-left-color: #6a994e;
 }
+
 body.dark .goal-list li:hover {
   background: #161b21;
 }
-body.dark .goal-list button {
-  background: #6a994e;
-}
-body.dark .goal-list button:hover {
-  filter: brightness(1.05);
+
+body.dark .progress-bar {
+  background: #2a2f36;
 }
 
-/* Progress */
-body.dark .progress label { color: #c6d0da; }
-body.dark .progress-bar { background: #2a2f36; }
-body.dark #progressText { color: #d5dee7; }
-
-/* Quote */
 body.dark .daily-quote {
   background: rgba(106, 153, 78, 0.12);
   color: #cfe6d3;
 }
 
-/* Tabs */
-body.dark .ui-tabs button {
-  background: #2a2f36;
-  color: #c6d0da;
-}
-body.dark .ui-tabs button.active {
-  background: #6a994e;
-  color: #fff;
-}
-body.dark .ui-tabs button:hover {
-  background: #3a414b;
-  color: #fff;
-}
-
-/* Stats panel */
 body.dark .stats {
   background: #0f1317;
   box-shadow: inset 0 2px 4px rgba(0,0,0,0.35);
-}
-
-/* Notifications */
-body.dark .notification-success { background: #1f8b4c; }
-body.dark .notification-error   { background: #b4232b; }
-body.dark .notification-info    { background: #0f7abf; }
-
-/* Scrollbars (WebKit) */
-body.dark .ui::-webkit-scrollbar-thumb,
-body.dark .goal-list ul::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.18);
 }
